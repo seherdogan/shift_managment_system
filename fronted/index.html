@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vardiya Yönetim Sistemi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge-sabah {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-aksam {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-gece {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🕐 Vardiya Yönetim Sistemi</h1>
+
+        <div class="tabs">
+            <button class="tab active" data-cy="tab-employees" onclick="switchTab('employees')">👥 Çalışanlar</button>
+            <button class="tab" data-cy="tab-shifts" onclick="switchTab('shifts')">📅 Vardiyalar</button>
+        </div>
+
+        <!-- Çalışanlar Sekmesi -->
+        <div id="employees" class="tab-content active">
+            <div class="form-group">
+                <h3 style="margin-bottom: 15px;">➕ Yeni Çalışan Ekle</h3>
+                <input type="text" id="employeeName" data-cy="employee-name-input" placeholder="Ad Soyad">
+                <input type="text" id="employeeRole" data-cy="employee-role-input" placeholder="Pozisyon (örn: Mühendis, Teknisyen)">
+                <button class="btn btn-success" data-cy="add-employee-btn" onclick="addEmployee()">✓ Çalışan Ekle</button>
+            </div>
+
+            <div id="employeesList" data-cy="employees-list" class="grid"></div>
+        </div>
+
+        <!-- Vardiyalar Sekmesi -->
+        <div id="shifts" class="tab-content">
+            <div class="form-group">
+                <h3 style="margin-bottom: 15px;">➕ Yeni Vardiya Ekle</h3>
+                <select id="shiftEmployee" data-cy="shift-employee-select">
+                    <option value="">Çalışan Seçin</option>
+                </select>
+                <input type="date" id="shiftDate" data-cy="shift-date-input">
+                <select id="shiftType" data-cy="shift-type-select" onchange="updateShiftTimes()">
+                    <option value="Sabah">Sabah Vardiyası (08:00 - 16:00)</option>
+                    <option value="Aksam">Akşam Vardiyası (16:00 - 00:00)</option>
+                    <option value="Gece">Gece Vardiyası (00:00 - 08:00)</option>
+                </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="time" id="shiftStart" data-cy="shift-start-input" value="08:00">
+                    <input type="time" id="shiftEnd" data-cy="shift-end-input" value="16:00">
+                </div>
+                <button class="btn btn-success" data-cy="add-shift-btn" onclick="addShift()">✓ Vardiya Ekle</button>
+            </div>
+
+            <div id="shiftsList" data-cy="shifts-list" class="grid"></div>
+        </div>
+    </div>
+
+    <script>
+        let employees = [
+            { id: 1, name: 'Ahmet Yılmaz', role: 'Mühendis' },
+            { id: 2, name: 'Ayşe Demir', role: 'Teknisyen' },
+            { id: 3, name: 'Mehmet Kaya', role: 'Operatör' }
+        ];
+
+        let shifts = [
+            { id: 1, employeeId: 1, employeeName: 'Ahmet Yılmaz', date: '2025-11-08', type: 'Sabah', start: '08:00', end: '16:00' },
+            { id: 2, employeeId: 2, employeeName: 'Ayşe Demir', date: '2025-11-08', type: 'Aksam', start: '16:00', end: '00:00' },
+            { id: 3, employeeId: 3, employeeName: 'Mehmet Kaya', date: '2025-11-08', type: 'Gece', start: '00:00', end: '08:00' }
+        ];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'shifts') {
+                updateEmployeeSelect();
+            }
+        }
+
+        function updateEmployeeSelect() {
+            const select = document.getElementById('shiftEmployee');
+            select.innerHTML = '<option value="">Çalışan Seçin</option>';
+            employees.forEach(emp => {
+                select.innerHTML += `<option value="${emp.id}">${emp.name} - ${emp.role}</option>`;
+            });
+        }
+
+        function updateShiftTimes() {
+            const type = document.getElementById('shiftType').value;
+            const times = {
+                'Sabah': { start: '08:00', end: '16:00' },
+                'Aksam': { start: '16:00', end: '00:00' },
+                'Gece': { start: '00:00', end: '08:00' }
+            };
+            document.getElementById('shiftStart').value = times[type].start;
+            document.getElementById('shiftEnd').value = times[type].end;
+        }
+
+        function addEmployee() {
+            const name = document.getElementById('employeeName').value.trim();
+            const role = document.getElementById('employeeRole').value.trim();
+
+            if (!name || !role) {
+                alert('Lütfen tüm alanları doldurun!');
+                return;
+            }
+
+            const newEmployee = {
+                id: employees.length > 0 ? Math.max(...employees.map(e => e.id)) + 1 : 1,
+                name: name,
+                role: role
+            };
+
+            employees.push(newEmployee);
+            document.getElementById('employeeName').value = '';
+            document.getElementById('employeeRole').value = '';
+            renderEmployees();
+        }
+
+        function deleteEmployee(id) {
+            if (confirm('Bu çalışanı silmek istediğinizden emin misiniz?')) {
+                employees = employees.filter(emp => emp.id !== id);
+                shifts = shifts.filter(shift => shift.employeeId !== id);
+                renderEmployees();
+                renderShifts();
+            }
+        }
+
+        function addShift() {
+            const employeeId = parseInt(document.getElementById('shiftEmployee').value);
+            const date = document.getElementById('shiftDate').value;
+            const type = document.getElementById('shiftType').value;
+            const start = document.getElementById('shiftStart').value;
+            const end = document.getElementById('shiftEnd').value;
+
+            if (!employeeId || !date) {
+                alert('Lütfen çalışan ve tarih seçin!');
+                return;
+            }
+
+            const employee = employees.find(emp => emp.id === employeeId);
+
+            const newShift = {
+                id: shifts.length > 0 ? Math.max(...shifts.map(s => s.id)) + 1 : 1,
+                employeeId: employeeId,
+                employeeName: employee.name,
+                date: date,
+                type: type,
+                start: start,
+                end: end
+            };
+
+            shifts.push(newShift);
+            document.getElementById('shiftEmployee').value = '';
+            document.getElementById('shiftDate').value = '';
+            renderShifts();
+        }
+
+        function deleteShift(id) {
+            if (confirm('Bu vardiyayı silmek istediğinizden emin misiniz?')) {
+                shifts = shifts.filter(shift => shift.id !== id);
+                renderShifts();
+            }
+        }
+
+        function renderEmployees() {
+            const list = document.getElementById('employeesList');
+            
+            if (employees.length === 0) {
+                list.innerHTML = '<div class="empty-state">Henüz çalışan eklenmedi. Yukarıdaki formu kullanarak çalışan ekleyin.</div>';
+                return;
+            }
+
+            list.innerHTML = employees.map(emp => `
+                <div class="card" data-cy="employee-${emp.id}">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">${emp.name}</div>
+                            <div class="card-subtitle">${emp.role}</div>
+                        </div>
+                        <button class="btn btn-danger" data-cy="delete-employee-${emp.id}" onclick="deleteEmployee(${emp.id})">🗑️ Sil</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderShifts() {
+            const list = document.getElementById('shiftsList');
+            
+            if (shifts.length === 0) {
+                list.innerHTML = '<div class="empty-state">Henüz vardiya eklenmedi. Yukarıdaki formu kullanarak vardiya ekleyin.</div>';
+                return;
+            }
+
+            list.innerHTML = shifts.map(shift => `
+                <div class="card" data-cy="shift-${shift.id}">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">${shift.employeeName}</div>
+                            <div class="card-subtitle">📅 ${shift.date}</div>
+                            <div style="margin-top: 8px;">
+                                <span class="badge badge-${shift.type.toLowerCase()}">${shift.type}</span>
+                                <span style="margin-left: 10px; color: #666;">⏰ ${shift.start} - ${shift.end}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger" data-cy="delete-shift-${shift.id}" onclick="deleteShift(${shift.id})">🗑️ Sil</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // İlk yükleme
+        renderEmployees();
+        renderShifts();
+        updateEmployeeSelect();
+
+        // Bugünün tarihini varsayılan olarak ayarla
+        document.getElementById('shiftDate').valueAsDate = new Date();
+    </script>
+</body>
+</html>
